@@ -10,7 +10,7 @@ def main():
     dataset = "train.csv"
 
     df = pd.read_csv(dataset)
-    pr = gen_profile_report(df.head(10000), explorative=True)
+    pr = gen_profile_report(df, explorative=True)
 
     st.write(f"🔗 [Rossman Sales]({dataset})")
     st.write(df)
