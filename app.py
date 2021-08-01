@@ -117,6 +117,20 @@ def predict(model,csv):
     pred_df['Date'] = pd.to_datetime(pred_df['Date'])
     return pred_df
 
+def man_predict(model,csv):
+    
+    csv_copy=csv.copy()
+    csv_copy.drop("Store",axis=1,inplace=True)
+    
+    
+    csv_copy.drop("Date",axis=1,inplace=True)
+    
+    prediction=model.predict(csv_copy)
+    pred_df = csv.copy()
+
+    pred_df["Sales-Prediction"] = prediction
+    pred_df['Date'] = pd.to_datetime(pred_df['Date'])
+    return pred_df
 
 def main():
     dataset = "train.csv"
@@ -141,6 +155,46 @@ def main():
                 # st.write(test_csv)
                 prediction=predict(model,test_store)
                 st.write(prediction)
+    else:
+        days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        months = [i for i in range(12)]
+
+        holidays = {
+            "No Holiday": '0', "Public Holiday": "a", "Easter": "b", "Christmas": "c"}
+        school_holiday = [0, 1]
+
+        store_id = int(st.selectbox(
+            "Store Id",df["Store"].unique()))
+        # DayOfWeek	Date	Open	Promo	StateHoliday	SchoolHo
+        date = st.date_input('Sale date')
+        sate_hoilday = st.selectbox(
+            "Sate Holiday", list(holidays.keys()))
+        school_holiday = int(st.checkbox("School Holiday"))
+        school_promo = int(st.checkbox("Promotion Running"))
+        is_open = int(not st.checkbox("Store Closed"))
+
+        if st.button('Predict'):
+            man_test_data = pd.DataFrame()
+            man_test_data["Store"] = [1]
+            man_test_data["Date"] = [pd.to_datetime(date)]
+            man_test_data["DayOfWeek"] = man_test_data.Date.dt.dayofweek
+
+            man_test_data["Open"] = [is_open]
+            man_test_data["Promo"] = [school_promo]
+            
+            man_test_data["StateHoliday"] = [holidays[sate_hoilday]]
+            man_test_data["SchoolHoliday"] = [school_holiday]
+
+            man_test_data=dateExplode(man_test_data,"Date")
+            man_test_data=merge_store(man_test_data)
+            man_test_data=generate_features(man_test_data)
+            print(man_test_data.columns)
+            st.markdown("#### Data")
+            st.write(man_test_data)
+            st.markdown("#### Prediction")
+            pred = man_predict( model,man_test_data)
+            
+            st.write(f"{pred['Sales-Prediction'].to_list()[0]:.2f}")
 
     # st.write(df)
     
