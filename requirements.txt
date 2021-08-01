@@ -1,3 +1,4 @@
 streamlit==0.76.0
 holiday==1.0.0
 pandas==1.2.4
+sklearn
