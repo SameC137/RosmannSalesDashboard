@@ -8,7 +8,7 @@ import pickle
 
 @st.cache(allow_output_mutation=True)
 def loadModel():
-    file = open("model.pkl",'rb')
+    file = open("model2.pkl",'rb')
     model = pickle.load(file)
     return model
 @st.cache()
