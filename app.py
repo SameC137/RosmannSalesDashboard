@@ -6,6 +6,16 @@ import bisect
 # from streamlit_gallery.utils import readme
 import pickle
 
+import numpy as np
+
+from sklearn.base import BaseEstimator, TransformerMixin
+class CustomMaxImputer(BaseEstimator,TransformerMixin):
+    def fit(self, X, y=0):
+        self.fill_value  = X.max()
+        return self
+    def transform(self, X,y=0):
+        return np.where(X.isna(), self.fill_value, X)
+
 @st.cache(allow_output_mutation=True)
 def loadModel():
     file = open("model2.pkl",'rb')
