@@ -177,7 +177,7 @@ def main():
             man_test_data = pd.DataFrame()
             man_test_data["Store"] = [1]
             man_test_data["Date"] = [pd.to_datetime(date)]
-            man_test_data["DayOfWeek"] = man_test_data.Date.dt.dayofweek
+            man_test_data["DayOfWeek"] = man_test_data.Date.dt.dayofweek + 1
 
             man_test_data["Open"] = [is_open]
             man_test_data["Promo"] = [school_promo]
