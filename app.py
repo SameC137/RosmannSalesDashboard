@@ -7,6 +7,7 @@ import bisect
 import pickle
 
 import numpy as np
+import base64
 
 from sklearn.base import BaseEstimator, TransformerMixin
 class CustomMaxImputer(BaseEstimator,TransformerMixin):
@@ -108,7 +109,7 @@ def predict(model,csv):
     csv_copy.drop("Id",axis=1,inplace=True)
     
     csv_copy.drop("Date",axis=1,inplace=True)
-    print(csv_copy.columns)
+    csv_copy.to_csv("test_f.csv")
     prediction=model.predict(csv_copy)
     
     pred_df = csv.copy()
@@ -116,7 +117,13 @@ def predict(model,csv):
     pred_df["Sales-Prediction"] = prediction
     pred_df['Date'] = pd.to_datetime(pred_df['Date'])
     return pred_df
-
+def get_table_download_link_csv(df):
+    #csv = df.to_csv(index=False)
+    csv = df.to_csv().encode()
+    #b64 = base64.b64encode(csv.encode()).decode() 
+    b64 = base64.b64encode(csv).decode()
+    href = f'<a href="data:file/csv;base64,{b64}" download="prediction.csv" target="_blank">Download prediction as a file</a>'
+    return href
 def man_predict(model,csv):
     
     csv_copy=csv.copy()
@@ -155,6 +162,7 @@ def main():
                 # st.write(test_csv)
                 prediction=predict(model,test_store)
                 st.write(prediction)
+                st.markdown(get_table_download_link_csv(prediction), unsafe_allow_html=True)
     else:
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         months = [i for i in range(12)]
